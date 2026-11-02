@@ -211,3 +211,33 @@ export const addComment = async (req, res) => {
     return res.status(500).json({ message: 'Failed to add comment.' });
   }
 };
+
+// Delete a comment (by comment author or article author)
+export const deleteComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      include: { article: true }
+    });
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found.' });
+    }
+
+    // Allow deletion if the current user wrote the comment OR owns the article
+    const isCommentAuthor = comment.userId === req.user.id;
+    const isArticleAuthor = comment.article.authorId === req.user.id;
+
+    if (!isCommentAuthor && !isArticleAuthor) {
+      return res.status(403).json({ message: 'Not authorized to delete this comment.' });
+    }
+
+    await prisma.comment.delete({ where: { id: commentId } });
+    return res.json({ message: 'Comment deleted successfully.' });
+  } catch (error) {
+    console.error('deleteComment error:', error);
+    return res.status(500).json({ message: 'Failed to delete comment.' });
+  }
+};

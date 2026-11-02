@@ -5,7 +5,8 @@ import {
   createArticle,
   deleteArticle,
   toggleLike,
-  addComment
+  addComment,
+  deleteComment
 } from '../controllers/articleController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -20,5 +21,6 @@ router.post('/', protect, createArticle);
 router.delete('/:id', protect, deleteArticle);
 router.post('/:id/like', protect, toggleLike);
 router.post('/:id/comments', protect, addComment);
+router.delete('/comments/:commentId', protect, deleteComment);
 
 export default router;

@@ -61,13 +61,34 @@ export default function ArticleDetail() {
       const res = await API.post(`/articles/${article.id}/comments`, { content: commentText.trim() });
       setArticle((prev) => ({
         ...prev,
-        comments: [res.data, ...(prev.comments || [])]
+        comments: [res.data, ...(prev.comments || [])],
+        _count: {
+          ...prev._count,
+          comments: (prev._count?.comments || 0) + 1
+        }
       }));
       setCommentText('');
     } catch (err) {
       console.error('Comment error:', err);
     } finally {
       setSubmittingComment(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Delete this comment?')) return;
+    try {
+      await API.delete(`/articles/comments/${commentId}`);
+      setArticle((prev) => ({
+        ...prev,
+        comments: prev.comments.filter((c) => c.id !== commentId),
+        _count: {
+          ...prev._count,
+          comments: Math.max(0, (prev._count?.comments || 1) - 1)
+        }
+      }));
+    } catch (err) {
+      console.error('Delete comment error:', err);
     }
   };
 
@@ -202,17 +223,31 @@ export default function ArticleDetail() {
         {/* List */}
         <div className="space-y-2.5">
           {article.comments && article.comments.length > 0 ? (
-            article.comments.map((comment) => (
-              <div key={comment.id} className="border border-slate-800/80 rounded p-3 bg-slate-900/60">
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-medium text-slate-300">{comment.user?.name}</span>
-                  <span className="text-[11px] text-slate-500">
-                    {new Date(comment.createdAt).toLocaleDateString()}
-                  </span>
+            article.comments.map((comment) => {
+              const canDelete = user && (user.id === comment.userId || user.id === article.authorId);
+              return (
+                <div key={comment.id} className="border border-slate-800/80 rounded p-3 bg-slate-900/60">
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="font-medium text-slate-300">{comment.user?.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-slate-500">
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-slate-500 hover:text-rose-400 transition p-0.5"
+                          title="Delete comment"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-300 whitespace-pre-wrap">{comment.content}</p>
                 </div>
-                <p className="text-xs text-slate-300 whitespace-pre-wrap">{comment.content}</p>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p className="text-xs text-slate-500 py-2">No comments yet.</p>
           )}
