@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Base Axios instance configured for DevScribe backend API
+// Base Axios instance: uses VITE_API_URL if configured, otherwise falls back to local backend
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
 });
 
 // Request interceptor: attach bearer token to Authorization header if present

@@ -14,25 +14,25 @@ async function seed() {
   const salt = await bcrypt.genSalt(10);
   const password = await bcrypt.hash('password123', salt);
 
-  // 1. Create Demo Users
-  const user1 = await prisma.user.create({
+  // 1. Create Users
+  const ronit = await prisma.user.create({
     data: {
-      name: 'Alex Rivera',
-      username: 'alexdev',
-      email: 'alex@example.com',
+      name: 'Ronit Kundnani',
+      username: 'ronitkundnani',
+      email: 'ronitkundnani@gmail.com',
       password,
-      bio: 'Full-stack developer focused on React and Node.js.',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+      bio: 'Full-stack software developer and engineering student.',
+      avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=ronitkundnani'
     }
   });
 
-  const user2 = await prisma.user.create({
+  const sarah = await prisma.user.create({
     data: {
       name: 'Sarah Chen',
       username: 'sarahcodes',
       email: 'sarah@example.com',
       password,
-      bio: 'Software engineer building web apps and cloud systems.',
+      bio: 'Software engineer building web apps and distributed systems.',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80'
     }
   });
@@ -44,9 +44,9 @@ async function seed() {
       slug: 'getting-started-with-modern-react-state-and-hooks-ab12',
       summary: 'A practical guide to managing component state, custom hooks, and best practices in modern React.',
       tags: 'react,javascript,frontend',
-      coverImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop&q=80',
+      coverImage: '',
       readTime: 4,
-      authorId: user1.id,
+      authorId: ronit.id,
       content: `# Getting Started with Modern React State and Hooks
 
 React functional components combined with hooks make building reusable interfaces simpler and cleaner.
@@ -84,9 +84,9 @@ function Counter() {
       slug: 'building-clean-rest-apis-with-nodejs-and-express-cd34',
       summary: 'Learn how to structure controllers, routes, and error middleware for maintainable Express applications.',
       tags: 'nodejs,express,backend',
-      coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+      coverImage: '',
       readTime: 5,
-      authorId: user2.id,
+      authorId: sarah.id,
       content: `# Building Clean REST APIs with Node.js and Express
 
 A structured architecture helps keep your backend maintainable as your project grows.
@@ -116,7 +116,7 @@ Use custom middleware to catch unhandled errors and format them into readable JS
       title: 'Debounce Function in JavaScript',
       description: 'Delays invoking a callback until after a specified wait time has elapsed.',
       language: 'javascript',
-      authorId: user1.id,
+      authorId: ronit.id,
       code: `function debounce(func, delay = 300) {
   let timer;
   return function (...args) {
@@ -134,7 +134,7 @@ Use custom middleware to catch unhandled errors and format them into readable JS
       title: 'Axios Instance with Auth Token',
       description: 'Creates a pre-configured Axios instance that automatically attaches JWT tokens.',
       language: 'javascript',
-      authorId: user2.id,
+      authorId: sarah.id,
       code: `import axios from 'axios';
 
 const api = axios.create({
@@ -156,7 +156,7 @@ export default api;`
   // 4. Sample Interaction
   await prisma.like.create({
     data: {
-      userId: user2.id,
+      userId: sarah.id,
       articleId: article1.id
     }
   });
@@ -164,15 +164,13 @@ export default api;`
   await prisma.comment.create({
     data: {
       content: 'Great overview! The useState example is very straightforward.',
-      userId: user2.id,
+      userId: sarah.id,
       articleId: article1.id
     }
   });
 
   console.log('Database seeded successfully!');
-  console.log('Sample Accounts:');
-  console.log('- alex@example.com / password123');
-  console.log('- sarah@example.com / password123');
+  console.log('Account: ronitkundnani@gmail.com / password123');
 }
 
 seed()

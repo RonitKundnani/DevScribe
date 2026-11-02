@@ -26,11 +26,6 @@ export default function Login() {
     }
   };
 
-  const fillDemo = (email) => {
-    setIdentifier(email);
-    setPassword('password123');
-  };
-
   return (
     <div className="max-w-sm mx-auto my-16 px-4">
       <div className="bg-[#151b26] border border-[#242f42] rounded-lg p-6">
@@ -51,7 +46,7 @@ export default function Login() {
               required
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              placeholder="e.g. alex@example.com"
+              placeholder="e.g. ronitkundnani@gmail.com"
               className="w-full bg-[#1c2433] border border-[#242f42] rounded px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-teal-500"
             />
           </div>
@@ -76,26 +71,6 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
-        <div className="mt-5 pt-4 border-t border-[#242f42]">
-          <p className="text-[11px] text-slate-500 mb-2 font-mono">Demo accounts:</p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => fillDemo('alex@example.com')}
-              className="flex-1 py-1 bg-[#1c2433] hover:bg-slate-700 border border-[#242f42] text-[11px] rounded text-slate-300 transition"
-            >
-              Alex
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo('sarah@example.com')}
-              className="flex-1 py-1 bg-[#1c2433] hover:bg-slate-700 border border-[#242f42] text-[11px] rounded text-slate-300 transition"
-            >
-              Sarah
-            </button>
-          </div>
-        </div>
 
         <p className="mt-4 text-center text-xs text-slate-400">
           New here?{' '}
