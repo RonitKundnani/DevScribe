@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogIn } from 'lucide-react';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -27,27 +26,24 @@ export default function Login() {
     }
   };
 
-  // Quick fill helper for testing during evaluations
   const fillDemo = (email) => {
     setIdentifier(email);
     setPassword('password123');
   };
 
   return (
-    <div className="max-w-md mx-auto my-16 px-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-        <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-          <LogIn className="w-5 h-5 text-indigo-400" /> Sign In
-        </h2>
-        <p className="text-xs text-slate-400 mb-6">Enter your email or username to access your account</p>
+    <div className="max-w-sm mx-auto my-16 px-4">
+      <div className="bg-[#151b26] border border-[#242f42] rounded-lg p-6">
+        <h1 className="text-base font-bold text-slate-100 mb-1">Sign in</h1>
+        <p className="text-xs text-slate-400 mb-5">Access your DevScribe account</p>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+          <div className="mb-4 p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1">Email or Username</label>
             <input
@@ -55,8 +51,8 @@ export default function Login() {
               required
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              placeholder="alex@example.com or alexdev"
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+              placeholder="e.g. alex@example.com"
+              className="w-full bg-[#1c2433] border border-[#242f42] rounded px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-teal-500"
             />
           </div>
 
@@ -68,44 +64,43 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#1c2433] border border-[#242f42] rounded px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-teal-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition"
+            className="w-full py-2 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white rounded text-xs font-medium transition"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Demo login buttons for presentation / viva */}
-        <div className="mt-6 pt-6 border-t border-slate-800">
-          <p className="text-[11px] text-slate-500 mb-2 font-medium">Demo accounts for testing:</p>
+        <div className="mt-5 pt-4 border-t border-[#242f42]">
+          <p className="text-[11px] text-slate-500 mb-2 font-mono">Demo accounts:</p>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => fillDemo('alex@example.com')}
-              className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs rounded text-slate-300 transition"
+              className="flex-1 py-1 bg-[#1c2433] hover:bg-slate-700 border border-[#242f42] text-[11px] rounded text-slate-300 transition"
             >
-              Demo: Alex
+              Alex
             </button>
             <button
               type="button"
               onClick={() => fillDemo('sarah@example.com')}
-              className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs rounded text-slate-300 transition"
+              className="flex-1 py-1 bg-[#1c2433] hover:bg-slate-700 border border-[#242f42] text-[11px] rounded text-slate-300 transition"
             >
-              Demo: Sarah
+              Sarah
             </button>
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-400">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-indigo-400 hover:underline">
-            Register here
+        <p className="mt-4 text-center text-xs text-slate-400">
+          New here?{' '}
+          <Link to="/register" className="text-teal-400 hover:underline">
+            Create an account
           </Link>
         </p>
       </div>

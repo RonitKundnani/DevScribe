@@ -1,75 +1,100 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Code2, PenSquare, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { LogOut, PenLine, Terminal, BookOpen } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="border-b border-[#242f42] bg-[#151b26]/95 backdrop-blur sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         
-        {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2 text-indigo-400 font-bold text-lg hover:text-indigo-300">
-          <Code2 className="w-6 h-6" />
-          <span className="text-white tracking-tight">DevScribe</span>
-        </Link>
-
-        {/* Navigation Links */}
-        <div className="flex items-center gap-6 text-sm font-medium">
-          <Link to="/" className="text-slate-300 hover:text-white transition">
-            Articles
-          </Link>
-          <Link to="/snippets" className="text-slate-300 hover:text-white transition">
-            Snippets
+        {/* Brand */}
+        <div className="flex items-center gap-8">
+          <Link to="/" className="flex items-center gap-2 group">
+            <span className="w-7 h-7 rounded-md bg-teal-500/10 border border-teal-500/30 text-teal-400 font-mono font-bold text-sm flex items-center justify-center group-hover:border-teal-400 transition">
+              d/s
+            </span>
+            <span className="text-slate-100 font-semibold text-sm tracking-tight">
+              DevScribe
+            </span>
           </Link>
 
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-1 text-xs font-medium">
+            <Link
+              to="/"
+              className={`px-3 py-1.5 rounded-md flex items-center gap-1.5 transition ${
+                isActive('/')
+                  ? 'bg-[#1c2433] text-teal-300 font-semibold border border-[#242f42]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1c2433]/50'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" /> Articles
+            </Link>
+            <Link
+              to="/snippets"
+              className={`px-3 py-1.5 rounded-md flex items-center gap-1.5 transition ${
+                isActive('/snippets')
+                  ? 'bg-[#1c2433] text-teal-300 font-semibold border border-[#242f42]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1c2433]/50'
+              }`}
+            >
+              <Terminal className="w-3.5 h-3.5" /> Snippets
+            </Link>
+          </nav>
+        </div>
+
+        {/* User Actions */}
+        <div className="flex items-center gap-3 text-xs">
           {user ? (
-            <div className="flex items-center gap-4">
+            <>
               <Link
                 to="/create"
-                className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                className="bg-teal-600 hover:bg-teal-500 text-white font-medium px-3 py-1.5 rounded-md flex items-center gap-1.5 transition"
               >
-                <PenSquare className="w-3.5 h-3.5" />
-                Write
+                <PenLine className="w-3.5 h-3.5" /> Write
               </Link>
 
-              <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-                <span className="text-xs text-slate-400">@{user.username}</span>
+              <div className="flex items-center gap-2 pl-3 border-l border-[#242f42]">
+                <span className="text-slate-400 font-mono text-[11px]">@{user.username}</span>
                 <button
                   onClick={handleLogout}
-                  title="Logout"
-                  className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition"
+                  title="Sign out"
+                  className="p-1 text-slate-400 hover:text-rose-400 transition rounded hover:bg-[#1c2433]"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </div>
+            </>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="flex items-center gap-1 text-slate-300 hover:text-white transition text-xs"
+                className="text-slate-300 hover:text-white px-2.5 py-1.5 rounded hover:bg-[#1c2433] transition"
               >
-                <LogIn className="w-3.5 h-3.5" /> Login
+                Log in
               </Link>
               <Link
                 to="/register"
-                className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+                className="bg-teal-600 hover:bg-teal-500 text-white font-medium px-3 py-1.5 rounded-md transition"
               >
-                <UserPlus className="w-3.5 h-3.5" /> Register
+                Sign up
               </Link>
             </div>
           )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import MarkdownRenderer from '../components/MarkdownRenderer';
-import { Edit3, Eye, Send, Sparkles } from 'lucide-react';
 
-const DEFAULT_CONTENT = `# Title of your article
+const DEFAULT_CONTENT = `# Title
 
-Write your technical explanation here using **Markdown** formatting.
+Write your article here using Markdown.
 
-## Code Example:
+## Overview
+Brief introduction to the problem and solution.
 
+## Implementation Example
 \`\`\`javascript
-function greet(name) {
-  return \`Hello, \${name}!\`;
+function calculateSum(a, b) {
+  return a + b;
 }
 \`\`\`
 `;
@@ -25,22 +26,21 @@ export default function CreateArticle() {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [tags, setTags] = useState('react,javascript');
-  const [coverImage, setCoverImage] = useState('');
   const [content, setContent] = useState(DEFAULT_CONTENT);
-  const [tab, setTab] = useState('write'); // 'write' or 'preview'
+  const [tab, setTab] = useState('write');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   if (!user) {
     return (
-      <div className="max-w-md mx-auto my-20 p-8 bg-slate-900 border border-slate-800 rounded-2xl text-center">
-        <h2 className="text-lg font-bold text-white mb-2">Sign In Required</h2>
-        <p className="text-xs text-slate-400 mb-6">Please sign in to your account to write and publish articles.</p>
+      <div className="max-w-md mx-auto my-16 p-6 bg-[#151b26] border border-[#242f42] rounded-lg text-center">
+        <h2 className="text-sm font-semibold text-slate-100 mb-1">Sign-in Required</h2>
+        <p className="text-xs text-slate-400 mb-4">Please log in to write and publish an article.</p>
         <button
           onClick={() => navigate('/login')}
-          className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white text-xs font-semibold"
+          className="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 rounded text-white text-xs font-medium transition"
         >
-          Go to Login
+          Sign In
         </button>
       </div>
     );
@@ -61,7 +61,6 @@ export default function CreateArticle() {
         title: title.trim(),
         summary: summary.trim(),
         tags: tags.trim(),
-        coverImage: coverImage.trim(),
         content
       });
       navigate(`/articles/${res.data.slug}`);
@@ -73,114 +72,108 @@ export default function CreateArticle() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <div className="flex items-center justify-between pb-4 border-b border-[#242f42] mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" /> Draft New Article
-          </h1>
-          <p className="text-xs text-slate-400 mt-0.5">Write with GitHub-flavored Markdown support</p>
+          <h1 className="text-lg font-bold text-slate-100">Write Article</h1>
+          <p className="text-xs text-slate-400 mt-0.5">Markdown format with syntax highlighting.</p>
         </div>
 
-        {/* Tab switch */}
-        <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl">
+        <div className="flex bg-[#151b26] border border-[#242f42] p-0.5 rounded text-xs">
           <button
             type="button"
             onClick={() => setTab('write')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              tab === 'write' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1 rounded transition ${
+              tab === 'write' ? 'bg-[#1c2433] text-teal-300 font-medium' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Edit3 className="w-3.5 h-3.5" /> Write
+            Edit
           </button>
           <button
             type="button"
             onClick={() => setTab('preview')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-              tab === 'preview' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1 rounded transition ${
+              tab === 'preview' ? 'bg-[#1c2433] text-teal-300 font-medium' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Eye className="w-3.5 h-3.5" /> Preview
+            Preview
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl">
+        <div className="mb-4 p-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs rounded">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
+          <label className="block text-xs font-medium text-slate-300 mb-1">Title</label>
           <input
             type="text"
             required
-            placeholder="Article Title..."
+            placeholder="e.g. Understanding React useEffect Lifecycle"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full text-2xl font-bold bg-transparent border-b border-slate-800 focus:border-indigo-500 text-white placeholder-slate-600 pb-2 focus:outline-none"
+            className="w-full bg-[#151b26] border border-[#242f42] rounded px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-500"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <input
-            type="text"
-            placeholder="Tags (comma separated, e.g. react, nodejs)"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
-          />
-          <input
-            type="url"
-            placeholder="Cover Image URL (optional)"
-            value={coverImage}
-            onChange={(e) => setCoverImage(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
-          />
-        </div>
-
-        <div>
-          <input
-            type="text"
-            placeholder="Brief excerpt / summary (optional)"
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
-          />
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">Tags (comma separated)</label>
+            <input
+              type="text"
+              placeholder="e.g. react, hooks, javascript"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              className="w-full bg-[#151b26] border border-[#242f42] rounded px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500 font-mono"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">Short Excerpt (optional)</label>
+            <input
+              type="text"
+              placeholder="Brief summary for card display"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              className="w-full bg-[#151b26] border border-[#242f42] rounded px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500"
+            />
+          </div>
         </div>
 
         {tab === 'write' ? (
           <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">Content (Markdown)</label>
             <textarea
               rows={16}
               required
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your article body in Markdown..."
-              className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 font-mono text-xs sm:text-sm text-slate-200 leading-relaxed focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#151b26] border border-[#242f42] rounded p-3.5 font-mono text-xs text-slate-200 leading-relaxed focus:outline-none focus:border-teal-500"
             />
           </div>
         ) : (
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 min-h-[380px]">
+          <div className="bg-[#151b26] border border-[#242f42] rounded p-6 min-h-[360px]">
             <MarkdownRenderer content={content} />
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+        <div className="flex justify-end gap-3 pt-3 border-t border-[#242f42]">
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="px-4 py-2 text-xs text-slate-400 hover:text-white"
+            className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-lg shadow-indigo-600/20"
+            className="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white rounded text-xs font-medium transition"
           >
-            <Send className="w-3.5 h-3.5" /> {loading ? 'Publishing...' : 'Publish Article'}
+            {loading ? 'Publishing...' : 'Publish Post'}
           </button>
         </div>
       </form>

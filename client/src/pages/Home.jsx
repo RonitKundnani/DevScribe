@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import API from '../services/api';
 import ArticleCard from '../components/ArticleCard';
-import { Sparkles, Terminal, Tag, ArrowRight, Loader2 } from 'lucide-react';
+import { Loader2, Search, PenLine } from 'lucide-react';
 
 const TAGS = ['all', 'react', 'javascript', 'nodejs', 'express', 'frontend', 'backend'];
 
@@ -13,6 +13,7 @@ export default function Home() {
 
   const activeTag = searchParams.get('tag') || 'all';
   const searchQuery = searchParams.get('search') || '';
+  const [localSearch, setLocalSearch] = useState(searchQuery);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -44,51 +45,62 @@ export default function Home() {
     setSearchParams(nextParams);
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const nextParams = new URLSearchParams(searchParams);
+    if (localSearch.trim()) {
+      nextParams.set('search', localSearch.trim());
+    } else {
+      nextParams.delete('search');
+    }
+    setSearchParams(nextParams);
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      {/* Hero Section */}
-      <section className="text-center py-10 mb-8 border-b border-slate-800">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-semibold mb-3">
-          <Sparkles className="w-3.5 h-3.5" /> Technical Developer Platform
-        </span>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-          Read, Write & Share Modern Engineering
-        </h1>
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base mb-6">
-          A place to publish technical writeups, explore tutorials, and share reusable code snippets.
-        </p>
-        <div className="flex justify-center gap-3">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+      {/* Top Banner / Utility Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#242f42]">
+        <div>
+          <h1 className="text-xl font-bold text-slate-100">Articles</h1>
+          <p className="text-xs text-slate-400 mt-0.5">Software design notes, tutorials, and development logs.</p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <input
+              type="text"
+              placeholder="Search posts..."
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              className="bg-[#151b26] border border-[#242f42] text-xs text-slate-200 placeholder-slate-500 rounded-md pl-8 pr-3 py-1.5 focus:outline-none focus:border-teal-500 transition w-44 sm:w-56"
+            />
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+          </form>
+
           <Link
             to="/create"
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-indigo-600/20"
+            className="bg-teal-600 hover:bg-teal-500 text-white text-xs font-medium px-3.5 py-1.5 rounded-md flex items-center gap-1.5 transition whitespace-nowrap"
           >
-            Start Writing <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            to="/snippets"
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2"
-          >
-            <Terminal className="w-4 h-4 text-cyan-400" /> Explore Snippets
+            <PenLine className="w-3.5 h-3.5" /> New Post
           </Link>
         </div>
-      </section>
+      </div>
 
       {/* Filter Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8">
-        <Tag className="w-4 h-4 text-slate-500 shrink-0" />
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-6">
         {TAGS.map((tag) => {
           const isActive = (tag === 'all' && (!activeTag || activeTag === 'all')) || activeTag === tag;
           return (
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium capitalize transition whitespace-nowrap ${
+              className={`px-3 py-1 rounded-md text-xs font-mono font-medium capitalize transition ${
                 isActive
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-teal-500/10 text-teal-300 border border-teal-500/30'
+                  : 'bg-[#151b26] text-slate-400 hover:text-slate-200 hover:bg-[#1c2433] border border-[#242f42]'
               }`}
             >
-              {tag}
+              #{tag}
             </button>
           );
         })}
@@ -96,25 +108,28 @@ export default function Home() {
 
       {/* Article Grid */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-          <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
-          <p className="text-sm">Loading articles...</p>
+        <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+          <Loader2 className="w-5 h-5 animate-spin text-teal-400 mb-2" />
+          <p className="text-xs">Loading articles...</p>
         </div>
       ) : articles.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {articles.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <p className="text-slate-300 font-semibold mb-1">No articles found</p>
-          <p className="text-xs text-slate-500 mb-4">Try clearing your filters or write the first article!</p>
+        <div className="text-center py-16 border border-[#242f42] rounded-lg bg-[#151b26]">
+          <p className="text-sm text-slate-300 font-medium mb-1">No articles found</p>
+          <p className="text-xs text-slate-500 mb-3">No posts found matching the current search or tag filter.</p>
           <button
-            onClick={() => setSearchParams({})}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition"
+            onClick={() => {
+              setLocalSearch('');
+              setSearchParams({});
+            }}
+            className="px-3 py-1.5 bg-[#1c2433] hover:bg-slate-700 text-slate-300 text-xs rounded border border-[#242f42] transition"
           >
-            Reset Filters
+            Clear Filters
           </button>
         </div>
       )}

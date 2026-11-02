@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import MarkdownRenderer from '../components/MarkdownRenderer';
-import { Heart, Trash2, Clock, Calendar, Send, Loader2, ArrowLeft } from 'lucide-react';
+import { Heart, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
 
 export default function ArticleDetail() {
   const { slug } = useParams();
@@ -83,20 +83,20 @@ export default function ArticleDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-slate-400">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
-        <p className="text-sm">Loading article...</p>
+      <div className="min-h-[50vh] flex flex-col items-center justify-center text-slate-400">
+        <Loader2 className="w-6 h-6 animate-spin text-slate-500 mb-2" />
+        <p className="text-xs">Loading article...</p>
       </div>
     );
   }
 
   if (!article) {
     return (
-      <div className="max-w-md mx-auto my-20 p-8 text-center bg-slate-900 border border-slate-800 rounded-2xl">
-        <h2 className="text-lg font-bold text-white mb-2">Article Not Found</h2>
-        <p className="text-xs text-slate-400 mb-4">The article you requested could not be located.</p>
-        <Link to="/" className="text-xs px-4 py-2 bg-indigo-600 rounded-lg text-white font-medium">
-          Back to Feed
+      <div className="max-w-md mx-auto my-16 p-6 text-center border border-slate-800 rounded-lg bg-slate-900">
+        <h2 className="text-sm font-semibold text-white mb-2">Article Not Found</h2>
+        <p className="text-xs text-slate-400 mb-3">The article you requested could not be located.</p>
+        <Link to="/" className="text-xs text-indigo-400 hover:underline">
+          Back to articles
         </Link>
       </div>
     );
@@ -111,62 +111,42 @@ export default function ArticleDetail() {
         <ArrowLeft className="w-3.5 h-3.5" /> Back to Articles
       </Link>
 
-      {article.coverImage && (
-        <div className="aspect-video w-full rounded-2xl overflow-hidden mb-6 border border-slate-800">
-          <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
-        </div>
-      )}
-
       {/* Header */}
-      <header className="mb-6 pb-6 border-b border-slate-800">
-        <div className="flex flex-wrap gap-1.5 mb-3">
+      <header className="mb-6 pb-5 border-b border-slate-800">
+        <div className="flex flex-wrap gap-1.5 mb-2.5">
           {tags.map((tag) => (
-            <span key={tag} className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span key={tag} className="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">
               #{tag}
             </span>
           ))}
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
           {article.title}
         </h1>
 
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img
-              src={article.author?.avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${article.author?.username}`}
-              alt={article.author?.name}
-              className="w-10 h-10 rounded-full object-cover ring-1 ring-slate-700"
-            />
-            <div>
-              <p className="text-sm font-semibold text-white">{article.author?.name}</p>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> {article.readTime} min read
-                </span>
-              </div>
-            </div>
+        <div className="flex items-center justify-between text-xs text-slate-400">
+          <div>
+            <span className="text-slate-300 font-medium">{article.author?.name}</span>
+            <span className="mx-1.5">•</span>
+            <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+            <span className="mx-1.5">•</span>
+            <span>{article.readTime} min read</span>
           </div>
 
           <div className="flex items-center gap-2">
             {isAuthor && (
               <button
                 onClick={handleDeleteArticle}
-                className="p-2 text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 text-xs flex items-center gap-1 transition"
-                title="Delete article"
+                className="text-xs text-rose-400 hover:underline flex items-center gap-1"
               >
-                <Trash2 className="w-4 h-4" /> Delete
+                <Trash2 className="w-3.5 h-3.5" /> Delete
               </button>
             )}
 
             <button
               onClick={handleLike}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium border transition ${
                 liked
                   ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
                   : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
@@ -180,35 +160,35 @@ export default function ArticleDetail() {
       </header>
 
       {/* Content */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 mb-10 shadow-lg">
+      <article className="border border-slate-800 rounded-lg p-6 bg-slate-900/40 mb-8">
         <MarkdownRenderer content={article.content} />
-      </div>
+      </article>
 
       {/* Comments */}
-      <section className="pt-6 border-t border-slate-800">
-        <h3 className="text-xl font-bold text-white mb-4">
+      <section className="pt-4 border-t border-slate-800">
+        <h2 className="text-sm font-semibold text-white mb-3">
           Comments ({article.comments?.length || 0})
-        </h3>
+        </h2>
 
         {/* Form */}
-        <form onSubmit={handleAddComment} className="mb-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-3">
+        <form onSubmit={handleAddComment} className="mb-4">
+          <div className="border border-slate-800 rounded p-2.5 bg-slate-900">
             <textarea
               rows={3}
-              placeholder={user ? "Write a comment..." : "Please log in to post a comment"}
+              placeholder={user ? "Add a comment..." : "Log in to post a comment"}
               disabled={!user || submittingComment}
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               className="w-full bg-transparent text-xs text-slate-200 placeholder-slate-500 focus:outline-none resize-none"
             />
-            <div className="flex justify-end pt-2 border-t border-slate-800">
+            <div className="flex justify-end pt-2 border-t border-slate-800/80">
               {user ? (
                 <button
                   type="submit"
                   disabled={submittingComment || !commentText.trim()}
-                  className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg flex items-center gap-1"
+                  className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-medium rounded"
                 >
-                  <Send className="w-3 h-3" /> Post
+                  Post Comment
                 </button>
               ) : (
                 <Link to="/login" className="text-xs text-indigo-400 hover:underline">
@@ -220,28 +200,21 @@ export default function ArticleDetail() {
         </form>
 
         {/* List */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {article.comments && article.comments.length > 0 ? (
             article.comments.map((comment) => (
-              <div key={comment.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex gap-3">
-                <img
-                  src={comment.user?.avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${comment.user?.username}`}
-                  alt={comment.user?.name}
-                  className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-slate-200">{comment.user?.name}</span>
-                    <span className="text-[10px] text-slate-500">
-                      {new Date(comment.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-300 whitespace-pre-wrap">{comment.content}</p>
+              <div key={comment.id} className="border border-slate-800/80 rounded p-3 bg-slate-900/60">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="font-medium text-slate-300">{comment.user?.name}</span>
+                  <span className="text-[11px] text-slate-500">
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
+                <p className="text-xs text-slate-300 whitespace-pre-wrap">{comment.content}</p>
               </div>
             ))
           ) : (
-            <p className="text-xs text-slate-500 py-3">No comments yet.</p>
+            <p className="text-xs text-slate-500 py-2">No comments yet.</p>
           )}
         </div>
       </section>
